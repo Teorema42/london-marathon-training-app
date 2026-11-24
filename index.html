@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F4F4F0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="London 27">
+<title>London Marathon 2027 Training</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Archivo:wdth,wght@125,900&display=swap">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script>tailwind.config={theme:{extend:{colors:{accent:'#EEF844',ink:'#111215',card:'#18191E',chip:'#F3F4F6',paper:'#F4F4F0',sub:'#63666E',body:'#4B4E56',muted:'#8A8E99'},borderRadius:{card:'28px'},fontFamily:{sans:['Inter','system-ui','-apple-system','Segoe UI','Roboto','sans-serif']}}}}</script>
+<style>
+html,body,#root{height:100%;margin:0;background:#F4F4F0}
+body{font-family:Inter,system-ui,-apple-system,sans-serif;color:#111215;-webkit-tap-highlight-color:transparent}
+button{cursor:pointer;transition:transform 300ms cubic-bezier(.16,1,.3,1),background-color 300ms}
+button:active{transform:scale(.96)}
+.view{animation:in 300ms cubic-bezier(.16,1,.3,1)}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.sheet{animation:up 300ms cubic-bezier(.16,1,.3,1)}
+@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+input,textarea{font-size:16px}
+.display{font-family:'SF Pro Expanded',Archivo,Inter,system-ui,sans-serif;font-stretch:125%;font-weight:900}
+</style>
+<style>
+/* Nuke Netlify badge */
+iframe[src*="netlify"],
+[id*="netlify"],
+[class*="netlify"],
+div[data-netlify-deploy-id]{
+  display:none !important;
+  visibility:hidden !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script type="text/babel">
+const {useState,useEffect}=React;
+
+/* ---------- PLAN DATA (from London_Marathon_2027_-_Training_Plan.xlsx) ---------- */
+const W=[
+[[7,"7 km easy conversational pace (Z2)","Run 1: Easy Run"],[9,"2 km warm-up + 5 km marathon pace + 2 km cool-down","Run 2: Marathon Pace"],[16,"16 km: first 12 km easy, last 4 km slightly faster","Run 3: Progressive Long Run"]],
+[[8,"8 km easy aerobic pace (Z2)","Run 1: Easy Run"],[10,"2 km warm-up + 6x(3' fast / 2' easy recovery) + 2 km cool-down","Run 2: Fartlek / Intervals"],[18,"18 km + test 1 gel at km 10","Run 3: Progressive Long Run"]],
+[[8,"8 km easy pace (Z2)","Run 1: Easy Run"],[11,"2 km warm-up + 7 km marathon pace + 2 km cool-down","Run 2: Marathon Pace"],[20,"20 km + 2 gels (km 8 and km 15) + vaseline","Run 3: Progressive Long Run"]],
+[[6,"6 km very easy shakeout run","Run 1: Shakeout"],[8,"8 km easy + 5x100m strides to finish","Run 2: Easy + Strides"],[14,"14 km all at steady Z2 pace","Run 3: Cutback Long Run"]],
+[[8,"8 km easy pace (Z2)","Run 1: Easy Run"],[12,"2 km warm-up + 2x4 km at half marathon/threshold pace (3' jog recovery) + 2 km cool-down","Run 2: Tempo Run"],[22,"22 km + 2 gels (km 8 and km 16)","Run 3: Progressive Long Run"]],
+[[9,"9 km easy pace (Z2)","Run 1: Easy Run"],[12,"2 km warm-up + 8 km marathon pace + 2 km cool-down","Run 2: Marathon Pace"],[24,"24 km (last 6 km at marathon pace) + 3 gels","Run 3: Progressive Long Run"]],
+[[7,"7 km easy","Run 1: Easy Run"],[6,"6 km very easy + 4 strides","Run 2: Pre-Race Activation"],[21.1,"Full race rehearsal: 15 km marathon pace + 6 km controlled progression. Test Adios Pro 4 + gels!","TEST RACE: Half Marathon"]],
+[[7,"7 km very slow recovery run","Run 1: Recovery Run"],[9,"9 km easy aerobic pace","Run 2: Easy Run"],[16,"16 km easy in Z2","Run 3: Cutback Long Run"]],
+[[9,"9 km easy pace (Z2)","Run 1: Easy Run"],[13,"2 km warm-up + 9 km marathon pace + 2 km cool-down","Run 2: Marathon Pace"],[28,"28 km + full strategy, 3-4 gels every 40'","Run 3: Over-25K Long Run"]],
+[[10,"10 km easy pace (Z2)","Run 1: Easy Run"],[14,"3 km warm-up + 8 km progression + 3 km cool-down","Run 2: Tempo / Progression"],[30,"30 km (last 8 km at marathon pace) + 4 gels + vaseline","Run 3: 30K Long Run"]],
+[[8,"8 km easy","Run 1: Easy Run"],[10,"10 km easy + 5 strides","Run 2: Easy + Strides"],[20,"20 km easy in Z2","Run 3: Cutback Long Run"]],
+[[9,"9 km easy pace (Z2)","Run 1: Easy Run"],[12,"2 km warm-up + 8 km marathon pace + 2 km cool-down","Run 2: Marathon Pace"],[32,"32 km full simulation: apparel, socks, vaseline, gels every 35-40'","Run 3: 32K PEAK LONG RUN"]],
+[[8,"8 km easy (Z2)","Run 1: Easy Run"],[11,"2 km warm-up + 7 km marathon pace + 2 km cool-down","Run 2: Marathon Pace"],[24,"24 km (last 6 km at marathon pace)","Run 3: Taper Long Run 1"]],
+[[7,"7 km easy","Run 1: Easy Run"],[10,"2 km warm-up + 6 km marathon pace + 2 km cool-down","Run 2: Marathon Pace"],[16,"16 km easy","Run 3: Taper Long Run 2"]],
+[[6,"6 km easy","Run 1: Easy Run"],[8,"3 km easy + 3 km marathon pace + 2 km cool-down","Run 2: Race Pace Tune-Up"],[10,"10 km very easy in Z2","Run 3: Final Pre-Race Long Run"]],
+null];
+const PH=[["Base","Aerobic Base & Building",1,4,"135 km"],["Build","Endurance & Half Marathon Test",5,8,"153.1 km"],["Peak","Specific Marathon Peak",9,12,"195 km"],["Taper","Tapering & London Marathon",13,16,"150.2 km"]];
+const DN=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const pad=n=>(n<10?"0":"")+n;
+const kf=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const lab=d=>d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});
+const sh=d=>d.toLocaleDateString("en-GB",{day:"numeric",month:"short"});
+const r1=n=>Math.round(n*10)/10;
+
+function build(){
+  const P=[];
+  for(let wk=1;wk<=16;wk++){
+    for(let i=0;i<7;i++){
+      const d=new Date(2027,0,4+7*(wk-1)+i);
+      let t,det,km=0,shoe="-",loc="Lymington";
+      const w=W[wk-1];
+      if(wk===16){
+        const x=[["Rest / Mobility","15' light mobility (no weights)",0],["Run 1: Shakeout Run","5 km very easy + 4 strides",5],["Bib Pickup (ExCeL Expo)","Minimize walking at the Expo!",0],["Rest & Hydration","Return to Lymington, focus on sleep and hydration",0],["Total Rest + Carb Load","Start carb-loading + pack race bag",0],["Shakeout 3 km / Travel","3 km very easy morning shakeout + travel to London. Vaseline, safety pins, gels ready!",3],["LONDON MARATHON 2027","Stay controlled for the first 10 km, gel every 35-40', enjoy every mile to The Mall!",42.2]][i];
+        t=x[0];det=x[1];km=x[2];
+        if(km)shoe=i===6?"Adidas Adios Pro 4":"Adidas EVO SL";
+        if(i===2||i===6)loc="London";
+        if(i===5)loc="Lymington → London";
+        if(i===3)loc="London → Lymington";
+      }else if(i===2||i===4||i===6){
+        const r=w[(i-2)/2];km=r[0];det=r[1];t=r[2];
+        shoe=i===6?(wk===7?"Adidas Adios Pro 4":"Brooks Glycerin Max 2"):"Adidas EVO SL";
+        if(i===2)loc="London";
+        if(wk===7&&i===6)loc="Hampshire/Dorset Area";
+      }else if(i===0){
+        if(wk===8){t="Rest / Active Recovery";det="Light walk or stretching (no heavy lifting post-race)";}
+        else{const m=wk===15?30:wk===14?35:wk===13?40:45;t=wk===15?"Gym: Light Upper Body":"Gym: Upper Body";det=m+"' upper body push/pull: dumbbell bench, lat pulldown, seated row, shoulders, biceps";shoe="Gym Equipment";}
+      }else if(i===1){
+        if(wk===8){t="Gym: Upper Body";det="45' upper body push/pull";shoe="Gym Equipment";}
+        else if(wk===15){t="Rest / Mobility";det="No leg day, fresh legs!";}
+        else{
+          const lt={4:20,7:30,11:30,12:35,13:30,14:25}[wk];
+          t=wk===14?"Gym: Legs & Knee (Very Light)":(lt&&wk!==12)?"Gym: Legs & Knee (Light)":"Gym: Legs & Knee";
+          det=(lt||40)+"' unilateral: Bulgarian split squats, step-ups, single-leg RDL, calves"+(wk===4?" (-20% load)":"");shoe="Gym Equipment";
+        }
+      }else if(i===3){
+        const mob=wk===4||wk===7||wk>=14;
+        t=mob?"Home: Mobility (19:30)":"Home: Core & Mobility (19:30)";
+        det=(wk===15?15:(wk>=13||wk===4||wk===7||wk===11)?20:25)+"' "+(mob?"stretching, hip & ankle mobility, foam roller":"plank, dead bug, bird-dog, clamshells, single-leg glute bridges");
+        shoe="Bodyweight";loc="London → Lymington";
+      }else{t="Total Rest";det=wk===7?"Rest & family. Prep race kit, bib, breakfast":"Rest & family. Hydration and carbs";}
+      P.push({key:kf(d),date:d,wk,dow:DN[i],dnum:d.getDate(),type:t,detail:det,km,shoe,loc,label:lab(d)});
+    }
+  }
+  return P;
+}
+/* Target paces are placeholders (the sheet has no pace data). Edit avg / lo / hi here. */
+const PACES={easy:{avg:"6:05",lo:"5:50",hi:"6:15"},mp:{avg:"5:55",lo:"5:50",hi:"6:00"},tempo:{avg:"5:40",lo:"5:35",hi:"5:45"}};
+const secOf=t=>{const a=t.split(":");return +a[0]*60+ +a[1]};
+const fmt=t=>{t=Math.round(t);const h=Math.floor(t/3600),m=Math.floor(t%3600/60),x=t%60;return h?h+":"+pad(m)+":"+pad(x):pad(m)+":"+pad(x)};
+function runInfo(p){
+  const t=p.type;let k="easy",zone="Zone 2 (easy, conversational)";
+  if(/Fartlek|Interval/i.test(t))return{tag:"EFFORT: Intervals",avg:null,lo:PACES.tempo.lo,hi:PACES.easy.hi,sec:(secOf(PACES.tempo.avg)+secOf(PACES.easy.avg))/2,pace:"By effort: fast reps hard, recoveries easy",zone:"Zone 2 easy, fast reps Zone 4"};
+  if(/Tempo|Progression/i.test(t)){k="tempo";zone="Zone 4 (threshold) on blocks, Zone 2 warm-up and cool-down";}
+  else if(/Marathon|Tune-Up|TEST RACE/i.test(t)){k="mp";zone="Zone 3 (marathon effort) on blocks, Zone 2 warm-up and cool-down";}
+  const q=PACES[k];
+  return{tag:"PACE @ "+q.avg+"/km",avg:q.avg,lo:q.lo,hi:q.hi,sec:secOf(q.avg),zone,pace:q.avg+" /km"+(k==="easy"?", easy and conversational":" on blocks, "+PACES.easy.avg+" /km warm-up and cool-down")};
+}
+function exFor(p){
+  const t=p.type;
+  if(/Upper/.test(t))return[["Dumbbell Bench Press","Chest · Dumbbells"],["Lat Pulldown","Back · Lat machine"],["Seated Cable Row","Back · Cable"],["Shoulder Press","Shoulders · Dumbbells"],["Biceps Curl","Arms · Dumbbells"]];
+  if(/Legs/.test(t))return[["Bulgarian Split Squats","Quads · 3 x 8-10"],["Box Step-Ups","Quads & Glutes · 3 x 10"],["Single-Leg RDL / Ext","Hamstrings · 3 x 10"],["Calf Raises","Calves"]];
+  if(/Core/.test(t))return[["Plank","Core"],["Dead Bug","Core"],["Bird-Dog","Core & Back"],["Clamshells","Hips · Glute medius"],["Single-Leg Glute Bridge","Glutes"]];
+  if(/^Home: Mobility/.test(t))return[["Stretching","Full body"],["Hip & Ankle Mobility","Hips"],["Foam Roller","Legs"]];
+  return[];
+}
+const PLAN=build();
+const MAXKM=54;
+
+/* ---------- storage ---------- */
+const LS="lm27-v1";
+const load=()=>{try{return JSON.parse(localStorage.getItem(LS))||{}}catch(e){return{}}};
+const save=(done,logs)=>{try{localStorage.setItem(LS,JSON.stringify({done,logs}))}catch(e){}};
+
+/* ---------- ui bits ---------- */
+const Chip=({children,dark,accent})=><span className={"inline-block rounded-full px-3 py-1.5 text-xs font-medium "+(accent?"bg-accent text-ink font-bold":dark?"bg-[#24262B] text-white":"bg-chip text-body")}>{children}</span>;
+const Card=({children,className=""})=><div className={"bg-white rounded-card p-5 mb-3 "+className}>{children}</div>;
+const Lbl=({children,className=""})=><div className={"text-[11px] font-medium tracking-[0.08em] uppercase text-sub "+className}>{children}</div>;
+const Check=({on})=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111215" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{opacity:on?1:0}}><path d="M5 12l5 5 9-10"/></svg>;
+const Ico=({d,children})=><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{children}</svg>;
+const Bar=({pct,h="h-2.5",track="bg-[#E6E6E0]"})=><div className={"w-full rounded-full overflow-hidden "+track+" "+h}><div className={"rounded-full bg-ink "+h} style={{width:pct+"%",transition:"width 300ms cubic-bezier(.16,1,.3,1)"}}/></div>;
+
+const dayIcon=k=>k==="run"?<path d="M2 18v-4l4-2 3 2h3l2-3 4 4 4 1v2z" fill="currentColor"/>:k==="gym"?<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11" strokeWidth="2.6"/>:k==="yoga"?<g><circle cx="12" cy="4.5" r="2" fill="currentColor"/><path d="M12 8v6M6 10l6-2 6 2M12 14l-4 6M12 14l4 6"/></g>:<g><path d="M4 9h13v5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M17 10h1.5a2 2 0 0 1 0 4H17"/><path d="M8 3v2M12 3v2"/></g>;
+
+function App(){
+  const init=load();
+  const [done,setDone]=useState(init.done||{});
+  const [logs,setLogs]=useState(init.logs||{});
+  const [tab,setTab]=useState(1);
+  const now=new Date();
+  const tk=kf(now);
+  const idx=PLAN.findIndex(p=>p.key===tk);
+  const before=tk<PLAN[0].key;
+  const f=PLAN.find(p=>p.km>0&&p.key>=tk)||PLAN[111];
+  const ri=runInfo(f);
+  const tag=idx>=0?"Today":before?"Up next":"Plan complete";
+  const [wkSel,setWkSel]=useState(f.wk);
+  const [fm,setFm]=useState({km:"",dur:"",rpe:0,note:""});
+  const [msg,setMsg]=useState("");
+  const [openPh,setOpenPh]=useState([true,false,false,false]);
+  const [sheet,setSheet]=useState(false);
+  const [detail,setDetail]=useState(null);
+  useEffect(()=>save(done,logs),[done,logs]);
+  const raceDays=Math.max(0,Math.ceil((new Date(2027,3,25)-new Date(now.getFullYear(),now.getMonth(),now.getDate()))/864e5));
+  const actual=p=>{if(!done[p.key])return 0;const l=logs[p.key];return l&&l.km!==""&&l.km!=null?+l.km:p.km};
+  const toggle=k=>setDone(d=>{const n={...d};n[k]?delete n[k]:n[k]=true;return n});
+  const saveLog=()=>{
+    setLogs(l=>({...l,[f.key]:{km:fm.km,dur:fm.dur,rpe:fm.rpe,note:fm.note}}));
+    setDone(d=>({...d,[f.key]:true}));
+    setMsg((fm.km||f.km)+" km · "+(fm.dur||"?")+" min · RPE "+(fm.rpe||"-"));
+    setFm({km:"",dur:"",rpe:0,note:""});
+  };
+  const phaseOf=wk=>PH.find(x=>wk>=x[2]&&wk<=x[3]);
+  const wkDays=PLAN.filter(p=>p.wk===wkSel);
+  const wkPlan=wkDays.reduce((a,p)=>a+p.km,0),wkDone=wkDays.reduce((a,p)=>a+actual(p),0);
+  const hist=PLAN.filter(p=>done[p.key]||logs[p.key]).reverse();
+  const totDone=r1(PLAN.reduce((a,p)=>a+actual(p),0));
+  const input="w-full h-12 rounded-2xl bg-chip px-3.5 text-ink outline-none focus:ring-2 focus:ring-accent";
+
+  const TodayView=()=>(<div className="view">
+    <Card className="!py-4">
+      <div className="flex items-center justify-between"><Lbl className="!text-ink"><span className="font-bold">Week {f.wk}:</span> <span className="font-normal">{sh(PLAN.find(p=>p.wk===f.wk).date)} – {sh(PLAN.filter(p=>p.wk===f.wk)[6].date)}</span></Lbl>
+        <button onClick={()=>{setWkSel(f.wk);setTab(2)}} className="relative h-8 px-3.5 rounded-full border border-ink text-xs font-semibold text-ink after:absolute after:-inset-2 after:content-['']">view all</button></div>
+      <div className="flex justify-between mt-3.5">{PLAN.filter(p=>p.wk===f.wk).map(p=>{
+        const dn=!!done[p.key],td=p.key===tk,kind=p.km>0?"run":/^Gym/.test(p.type)?"gym":/^Home/.test(p.type)?"yoga":"rest";
+        return <div key={p.key} className="flex flex-col items-center gap-1.5">
+          <span className="text-[11px] font-semibold text-ink">{p.dow[0]}</span>
+          <div className={"relative w-9 h-9 rounded-full flex items-center justify-center text-ink "+(kind==="rest"?"bg-chip":"bg-accent")+(td?" ring-2 ring-ink ring-offset-2 ring-offset-white":"")}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">{dayIcon(kind)}</svg>
+            {dn&&<span className="absolute -right-1 -bottom-1 w-4 h-4 rounded-full bg-ink flex items-center justify-center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#EEF844" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>}
+          </div>
+        </div>})}</div>
+    </Card>
+    <div className="bg-card text-white rounded-card p-6 mb-3">
+      <div className="flex items-center justify-between gap-3"><div className="text-[11px] font-medium tracking-[0.08em] uppercase text-muted">Next run: {f.label}</div>
+        <button onClick={()=>setSheet(true)} className="relative h-8 px-4 rounded-full border border-accent text-accent text-xs font-semibold after:absolute after:-inset-2 after:content-['']">view</button></div>
+      <div className="display text-2xl leading-[30px] tracking-tight mt-2">{f.type}</div>
+      <div className="flex items-baseline gap-1.5 mt-3"><span className="display text-[64px] leading-[64px] tracking-tighter">{f.km||"Rest"}</span>{f.km>0&&<span className="text-lg font-semibold text-muted">km</span>}</div>
+      <div className="text-[13px] leading-5 mt-3.5">{f.detail}</div>
+      <div className="flex flex-wrap gap-2 mt-3.5"><Chip dark>{ri.tag}</Chip><Chip dark>{f.loc}</Chip><Chip dark>Week {f.wk} · {phaseOf(f.wk)[0]}</Chip></div>
+      <button onClick={()=>toggle(f.key)} className="w-full h-12 mt-5 rounded-full bg-accent text-ink font-bold text-sm" style={{boxShadow:"0 0 16px rgba(238,248,68,.25)"}}>{done[f.key]?"Done. Tap to undo":f.km?"Mark as done":"Mark session done"}</button>
+    </div>
+    <Card>
+      <div className="display text-2xl leading-[30px] tracking-tight">Log your session</div>
+      <div className="flex gap-2.5 mt-3.5">
+        <div className="flex-1"><Lbl className="mb-1.5">Distance (km)</Lbl><input className={input} type="number" inputMode="decimal" placeholder={String(f.km||0)} value={fm.km} onChange={e=>setFm({...fm,km:e.target.value})}/></div>
+        <div className="flex-1"><Lbl className="mb-1.5">Duration (min)</Lbl><input className={input} type="number" inputMode="decimal" placeholder="0" value={fm.dur} onChange={e=>setFm({...fm,dur:e.target.value})}/></div>
+      </div>
+      <Lbl className="mt-4 mb-2">Perceived exertion (1-10)</Lbl>
+      <div className="flex flex-wrap gap-2">{[1,2,3,4,5,6,7,8,9,10].map(n=><button key={n} onClick={()=>setFm({...fm,rpe:n})} className={"w-11 h-11 rounded-full text-sm font-semibold "+(fm.rpe===n?"bg-accent text-ink":"bg-chip text-ink")}>{n}</button>)}</div>
+      <Lbl className="mt-4 mb-1.5">Notes</Lbl>
+      <textarea className={input+" h-20 py-3 resize-none"} placeholder="Knee, pace, nutrition..." value={fm.note} onChange={e=>setFm({...fm,note:e.target.value})}/>
+      <button onClick={saveLog} className="w-full h-12 mt-3.5 rounded-full bg-accent text-ink font-bold text-sm">Save log</button>
+      {msg&&<div className="text-[13px] text-body mt-2.5">Saved: {msg}</div>}
+    </Card>
+  </div>);
+
+  const WeekView=()=>(<div className="view">
+    <Card className="!bg-accent">
+      <div className="flex items-center justify-between">
+        <button aria-label="Previous week" disabled={wkSel<=1} onClick={()=>setWkSel(wkSel-1)} className="w-11 h-11 rounded-full bg-black/10 text-ink disabled:opacity-30 flex items-center justify-center"><Ico><path d="M15 6l-6 6 6 6"/></Ico></button>
+        <Lbl className="!text-ink">Week {wkSel} · {sh(wkDays[0].date)} - {sh(wkDays[6].date)}</Lbl>
+        <button aria-label="Next week" disabled={wkSel>=16} onClick={()=>setWkSel(wkSel+1)} className="w-11 h-11 rounded-full bg-black/10 text-ink disabled:opacity-30 flex items-center justify-center"><Ico><path d="M9 6l6 6-6 6"/></Ico></button>
+      </div>
+      <div className="flex items-baseline gap-1.5 mt-2"><span className="display text-5xl tracking-tighter">{r1(wkDone)}</span><span className="text-lg font-semibold text-ink">/ {r1(wkPlan)} km</span></div>
+      <div className="mt-3"><Bar track="bg-black/10" pct={wkPlan?Math.min(100,Math.round(wkDone/wkPlan*100)):0}/></div>
+    </Card>
+    <Card className="!py-2">
+      {wkDays.map((p,i)=><div key={p.key} className={"flex items-center gap-2.5 py-3 "+(i<6?"border-b border-black/5":"")}>
+        <div className="w-10"><Lbl>{p.dow}</Lbl><div className={"text-base font-bold "+(p.key===tk?"bg-accent rounded-md px-1 -ml-1 inline-block":"")}>{p.dnum}</div></div>
+        <div className="flex-1 min-w-0"><div className="text-sm font-semibold leading-[18px]">{p.type}</div><div className="text-xs text-sub mt-0.5">{p.km?p.km+" km • "+(runInfo(p).avg?"@ "+runInfo(p).avg+"/km":"by effort"):p.loc}</div></div>
+        <button onClick={()=>setDetail(p.key)} className="relative h-8 px-3 shrink-0 rounded-full border border-ink text-xs font-semibold text-ink after:absolute after:-inset-2 after:content-['']">view</button>
+        <button aria-label="Toggle done" onClick={()=>toggle(p.key)} className={"w-11 h-11 shrink-0 rounded-full border-2 border-ink flex items-center justify-center "+(done[p.key]?"bg-accent":"bg-white")}><Check on={done[p.key]}/></button>
+      </div>)}
+    </Card>
+  </div>);
+
+  const PlanView=()=>(<div className="view">
+    <Card className="!bg-accent">
+      <div className="flex justify-between items-baseline text-lg font-bold uppercase"><span>16 Weeks</span><span>633.3 km</span></div>
+      <div className="text-[13px] leading-5 mt-2">3 runs, 2 gym, 1 mobility per week.</div>
+      <div className="border-t border-black/20 mt-3 pt-3"><div className="text-lg font-semibold">Peak long run 32 km (Week 12)</div><div className="text-[13px] leading-5 mt-1">Race: Sunday 25 April 2027.</div></div>
+    </Card>
+    {PH.map((x,pi)=><Card key={x[0]}>
+      <button onClick={()=>setOpenPh(o=>o.map((v,j)=>j===pi?!v:v))} aria-expanded={openPh[pi]} className="w-full flex justify-between items-start text-left">
+        <div><div className="display text-2xl tracking-tight">{x[0]}</div><div className="text-[13px] text-sub mt-0.5">{x[1]}</div><div className="mt-2"><Chip>{x[4]}</Chip></div></div>
+        <span className="w-11 h-11 shrink-0 rounded-full bg-chip flex items-center justify-center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111215" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{transform:openPh[pi]?"rotate(180deg)":"none",transition:"transform 300ms cubic-bezier(.16,1,.3,1)"}}><path d="M6 9l6 6 6-6"/></svg></span>
+      </button>
+      <div className="grid" style={{gridTemplateRows:openPh[pi]?"1fr":"0fr",visibility:openPh[pi]?"visible":"hidden",transition:"grid-template-rows 300ms cubic-bezier(.16,1,.3,1), visibility 300ms"}}><div className="overflow-hidden"><div className="mt-3">{PLAN.filter(p=>p.wk>=x[2]&&p.wk<=x[3]&&p.dow==="Mon").map(m=>{
+        const ds=PLAN.filter(p=>p.wk===m.wk),km=r1(ds.reduce((a,p)=>a+p.km,0)),sun=ds[6],key=sun.km>=28||m.wk===7||m.wk===16;
+        return <button key={m.wk} onClick={()=>{setWkSel(m.wk);setTab(2)}} className="block w-full text-left py-2.5 border-t border-black/5">
+          <div className="flex justify-between items-center"><div className="text-sm font-semibold">Week {m.wk} <span className="font-normal text-xs text-sub">· {sh(m.date)} - {sh(sun.date)}</span></div><div className="text-sm font-bold">{km} km</div></div>
+          <div className="mt-2"><Bar pct={Math.round(km/MAXKM*100)} h="h-1.5"/></div>
+          <div className="mt-2"><span className={"inline-block rounded-full px-3 py-1.5 text-xs text-ink "+(key?"bg-accent font-bold":"bg-chip font-medium")}>{m.wk===16?"Race day ":"Long run "}{sun.km} km{m.wk===12?" · PEAK":m.wk===7?" · Half test":""}</span></div>
+        </button>})}</div></div></div>
+    </Card>)}
+  </div>);
+
+  const HistView=()=>(<div className="view">
+    <Card><Lbl>Completed</Lbl><div className="flex items-baseline gap-1.5 mt-1.5"><span className="display text-5xl tracking-tighter">{totDone}</span><span className="text-lg font-semibold text-sub">/ 633.3 km</span></div></Card>
+    {hist.length===0&&<Card><div className="text-sm text-body leading-5">No runs logged yet. Mark a session as done or save a log and it will appear here.</div></Card>}
+    {hist.map(p=>{const l=logs[p.key],a=actual(p)||(l&&+l.km)||0,m=l&&+l.dur;
+      return <Card key={p.key} className="!py-4">
+        <div className="flex justify-between"><Lbl>{p.label}</Lbl><Lbl>Week {p.wk}</Lbl></div>
+        <div className="text-lg font-semibold mt-1">{p.type}</div>
+        <div className="flex flex-wrap gap-2 mt-2.5"><Chip accent>{a?a+" km":"Done"}</Chip><Chip>Plan {p.km?p.km+" km":"-"}</Chip><Chip>{m?m+" min"+(a?" · "+Math.floor(m/a)+":"+pad(Math.round((m/a%1)*60))+" /km":""):"No time"}</Chip><Chip>{l&&l.rpe?"RPE "+l.rpe:"No RPE"}</Chip></div>
+        {l&&l.note&&<div className="text-[13px] leading-5 text-body mt-2.5">{l.note}</div>}
+      </Card>})}
+  </div>);
+
+  const finish=p=>{setDone(d=>{const n={...d};n[p.key]?delete n[p.key]:n[p.key]=true;return n});setDetail(null);setWkSel(p.wk);setTab(2);};
+  const DetailView=p=>{
+    const run=p.km>0,r=runInfo(p),ex=exFor(p),dn=!!done[p.key];
+    const top={paddingTop:"calc(20px + env(safe-area-inset-top))"};
+    const back=<button aria-label="Back" onClick={()=>setDetail(null)} className={"w-11 h-11 shrink-0 rounded-full border flex items-center justify-center "+(run?"border-white text-white":"border-ink text-ink")}><Ico><path d="M15 6l-6 6 6 6"/></Ico></button>;
+    const cta=<div className="px-5 pt-3" style={{paddingBottom:"calc(16px + env(safe-area-inset-bottom))",background:run?"#121212":"#F4F4F0"}}><button onClick={()=>finish(p)} className="w-full h-12 rounded-full bg-accent text-ink font-bold text-sm">{dn?"Completed. Tap to undo":"Mark as done"}</button></div>;
+    if(run){
+      const dur=fmt(p.km*r.sec),dist=p.km+"km";
+      return <div className="view absolute inset-0 z-40 flex flex-col text-white" style={{...top,background:"#121212"}}>
+        <div className="px-5 flex items-start gap-3">{back}<div className="display text-2xl leading-[30px] tracking-tight pt-1.5">{p.type}</div></div>
+        <div className="flex-1 overflow-y-auto px-5 py-6 flex flex-col items-center justify-center text-center gap-7">
+          <div><div className="text-[11px] font-medium tracking-[0.08em] uppercase">Estimated duration:</div><div className="display text-accent leading-none mt-3" style={{fontSize:dur.length>5?48:64}}>{dur}</div></div>
+          <div><div className="text-[11px] font-medium tracking-[0.08em] uppercase">Distance:</div><div className="display text-white leading-none mt-3" style={{fontSize:dist.length>5?52:64}}>{dist}</div></div>
+          <div><div className="text-[11px] font-medium tracking-[0.08em] uppercase">Pace range:</div><div className="display text-accent leading-[1.1] mt-3 text-[64px]">{r.lo}<br/>{r.hi}</div></div>
+          <div className="text-[13px] leading-5 text-muted max-w-[300px]">{p.detail}</div>
+        </div>
+        {cta}
+      </div>;
+    }
+    return <div className="view absolute inset-0 z-40 flex flex-col bg-paper" style={top}>
+      <div className="px-5 flex items-start gap-3">{back}<div className="display text-2xl leading-[30px] tracking-tight pt-1.5">{p.type}</div></div>
+      <div className="flex-1 overflow-y-auto px-5 pt-4 pb-4">
+        <div className="text-[13px] leading-5 text-body mb-3">{p.detail}</div>
+        {ex.length>0?<div className="bg-white rounded-card px-5 py-1">{ex.map((e,i)=><div key={e[0]} className={"flex items-center gap-3 py-3 "+(i<ex.length-1?"border-b border-black/5":"")}><div className="w-11 h-11 shrink-0 rounded-xl bg-chip flex items-center justify-center text-sm font-bold text-ink">{i+1}</div><div><div className="text-sm font-bold">{e[0]}</div><div className="text-xs text-sub mt-0.5">{e[1]}</div></div></div>)}</div>
+        :<Card><Lbl>{p.loc}</Lbl><div className="text-sm text-body leading-5 mt-1.5">No exercises scheduled. Follow the notes above.</div></Card>}
+      </div>
+      {cta}
+    </div>;
+  };
+  const PA="#F4F4F0";
+  const tabs=[["Overview",on=>on?<path fill="currentColor" d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>:<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>],
+    ["Weekly",on=>on?<g><rect x="3" y="5" width="18" height="16" rx="2" fill="currentColor"/><path d="M3 10h18" stroke={PA}/><path d="M8 3v4M16 3v4"/></g>:<g><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></g>],
+    ["Plan",on=>on?<g><path d="M3 17l6-6 4 4 8-8" strokeWidth="3"/><path d="M15 7h6v6z" fill="currentColor"/></g>:<g><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></g>],
+    ["History",on=>on?<g><circle cx="12" cy="12" r="9" fill="currentColor"/><path d="M12 7v5l3 2" stroke={PA}/></g>:<g><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></g>]];
+  return (<div className="relative mx-auto max-w-md h-full flex flex-col bg-paper overflow-hidden" style={{paddingTop:"env(safe-area-inset-top)"}}>
+    <div className="px-5 pt-6 pb-1 flex items-center justify-between gap-3">
+      <h1 className="display text-[32px] leading-[38px] tracking-tight m-0">{["Overview","Weekly","Plan","History"][tab-1]}</h1>
+      {tab===1&&<span className="shrink-0 whitespace-nowrap"><Chip accent>{raceDays} days to go</Chip></span>}
+    </div>
+    <div className="flex-1 overflow-y-auto px-5 pt-3 pb-32">{tab===1?TodayView():tab===2?WeekView():tab===3?PlanView():HistView()}</div>
+    <nav className="absolute left-4 right-4 flex gap-1 p-1.5 rounded-full backdrop-blur-2xl bg-white/70 dark:bg-zinc-900/70 border border-white/30 dark:border-white/10 ring-1 ring-black/5" style={{bottom:"max(8px, calc(env(safe-area-inset-bottom) - 16px))",backdropFilter:"blur(40px) saturate(1.8)",WebkitBackdropFilter:"blur(40px) saturate(1.8)",boxShadow:"0 10px 36px rgba(17,18,21,.16), inset 0 1px 0 rgba(255,255,255,.7)"}}>
+      {tabs.map((t,i)=><button key={t[0]} aria-label={t[0]} onClick={()=>setTab(i+1)} className={"flex-1 h-14 rounded-full flex flex-col items-center justify-center gap-0.5 "+(tab===i+1?"bg-black/[0.08] text-ink":"text-sub")}><Ico>{t[1](tab===i+1)}</Ico><span className="text-[11px] font-medium leading-[13px]">{t[0]}</span></button>)}
+    </nav>
+    {sheet&&<div className="absolute inset-0 z-50 flex flex-col justify-end" role="dialog" aria-modal="true">
+      <div className="absolute inset-0 bg-black/40" onClick={()=>setSheet(false)}/>
+      <div className="sheet relative bg-white rounded-t-card px-6 pt-5 max-h-[85%] overflow-y-auto" style={{paddingBottom:"calc(24px + env(safe-area-inset-bottom))"}}>
+        <div className="flex items-start justify-between gap-3">
+          <div><Lbl>{f.label} · Week {f.wk}</Lbl><div className="display text-2xl leading-[30px] tracking-tight mt-1.5">{f.type}</div></div>
+          <button aria-label="Close" onClick={()=>setSheet(false)} className="w-11 h-11 shrink-0 rounded-full bg-chip text-ink text-lg flex items-center justify-center">✕</button>
+        </div>
+        <div className="mt-5 divide-y divide-black/5">
+          <div className="py-3"><Lbl>Target distance</Lbl><div className="text-lg font-semibold mt-1">{f.km} km</div></div>
+          <div className="py-3"><Lbl>Target pace</Lbl><div className="text-base font-semibold mt-1">{ri.pace}</div></div>
+          <div className="py-3"><Lbl>Heart-rate zone</Lbl><div className="text-base font-semibold mt-1">{ri.zone}</div></div>
+          <div className="py-3"><Lbl>Session notes</Lbl><div className="text-[13px] leading-5 text-body mt-1">{f.detail}</div></div>
+        </div>
+        <div className="flex flex-wrap gap-2 mt-2"><Chip>{f.shoe}</Chip><Chip>{f.loc}</Chip><Chip>Week {f.wk} · {phaseOf(f.wk)[0]}</Chip></div>
+      </div>
+    </div>}
+    {detail&&DetailView(PLAN.find(x=>x.key===detail))}
+  </div>);
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+<script>
+// Remove badge from DOM if injected
+const removeBadge = () => {
+  document.querySelectorAll('iframe, div, a').forEach(el => {
+    if ((el.innerText && el.innerText.includes('Powered by Netlify')) ||
+        (el.src && el.src.includes('netlify')) ||
+        (el.id && el.id.includes('netlify'))) {
+      el.remove();
+    }
+  });
+};
+setInterval(removeBadge, 300);
+</script>
+</body>
+</html>
